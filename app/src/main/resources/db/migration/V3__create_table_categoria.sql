@@ -1,0 +1,4 @@
+CREATE TABLE IF NOT EXISTS categoria (
+    id       SERIAL PRIMARY KEY,
+    desc     VARCHAR(100) NOT NULL
+);

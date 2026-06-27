@@ -5,6 +5,7 @@ import com.example.app.auth.repository.UsuarioRepository;
 import com.example.app.auth.service.EmailService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -50,8 +51,13 @@ public class AuthController {
     }
 
     @PostMapping("/registrar")
-    public String registrarUsuario(Usuario usuario) {
-        usuarioRepo.save(usuario);
+    public String registrarUsuario(Usuario usuario, Model model) {
+        try {
+            usuarioRepo.save(usuario);
+        } catch (DataIntegrityViolationException e) {
+            model.addAttribute("erro", "Este login já está em uso. Escolha outro.");
+            return "usuario-form";
+        }
         try {
             emailService.enviarEmailSimples(
                     usuario.getEmail(),
@@ -73,12 +79,18 @@ public class AuthController {
     }
 
     @PostMapping("/perfil/salvar")
-    public String salvarPerfil(Usuario usuarioAtualizado, HttpSession session) {
+    public String salvarPerfil(Usuario usuarioAtualizado, HttpSession session, Model model) {
         Usuario usuarioLogado = (Usuario) session.getAttribute("usuarioLogado");
         if (usuarioLogado == null)
             return "redirect:/";
         usuarioAtualizado.setId(usuarioLogado.getId());
-        usuarioRepo.save(usuarioAtualizado);
+        try {
+            usuarioRepo.save(usuarioAtualizado);
+        } catch (DataIntegrityViolationException e) {
+            model.addAttribute("usuario", usuarioAtualizado);
+            model.addAttribute("erro", "Este login já está em uso. Escolha outro.");
+            return "editar-perfil";
+        }
         session.setAttribute("usuarioLogado", usuarioAtualizado);
         try {
             emailService.enviarEmailSimples(
