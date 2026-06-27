@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Editar Perfil</title>
+</head>
+<body>
+    <h2>Editar Perfil</h2>
+    <form action="/perfil/salvar" method="post" th:object="${usuario}">
+        <div>
+            <label>Nome:</label>
+            <input type="text" th:field="*{nome}" required />
+        </div>
+        <div>
+            <label>Login:</label>
+            <input type="text" th:field="*{login}" required />
+        </div>
+        <div>
+            <label>E-mail:</label>
+            <input type="email" th:field="*{email}" required />
+        </div>
+        <div>
+            <label>Nova Senha:</label>
+            <input type="text" th:field="*{senha}" required />
+        </div>
+        <button type="submit">Salvar</button>
+    </form>
+    <a href="/lancamentos">Cancelar</a>
+</body>
+</html>

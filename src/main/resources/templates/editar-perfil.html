@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Editar Perfil</title>
+</head>
+
+<body>
+
+    <h2>Editar Minhas Credenciais</h2>
+
+    <form th:action="@{/perfil/salvar}" th:object="${usuario}" method="POST">
+
+        <input type="hidden" th:field="*{id}" />
+
+        <div>
+            <label>Nome:</label>
+            <input type="text" th:field="*{nome}" required />
+        </div>
+
+        <div>
+            <label>Login:</label>
+            <input type="text" th:field="*{login}" required />
+        </div>
+
+        <div>
+            <label>E-mail:</label>
+            <input type="email" th:field="*{email}" required />
+        </div>
+
+        <div>
+            <label>Nova Senha:</label>
+            <input type="text" th:field="*{senha}" required />
+        </div>
+
+        <br>
+        <button type="submit">Salvar Alterações</button>
+        <a href="/lancamentos">Cancelar</a>
+    </form>
+
+</body>
+
+</html>

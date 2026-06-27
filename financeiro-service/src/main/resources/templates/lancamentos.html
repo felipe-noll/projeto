@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Lançamentos</title>
+</head>
+
+<body>
+
+<h2>Lista de Lançamentos</h2>
+
+<div class="filtros">
+    <form action="/lancamentos" method="get">
+        <input type="text" name="descricao" placeholder="Descrição">
+        <input type="date" name="dataInicio" placeholder="Data início">
+        <input type="date" name="dataFim" placeholder="Data fim">
+        <select name="tipoLancamento">
+            <option value="">Tipo (Todos)</option>
+            <option value="RECEITA">Receita</option>
+            <option value="DESPESA">Despesa</option>
+        </select>
+        <select name="situacao">
+            <option value="">Situação (Todas)</option>
+            <option value="PENDENTE">Pendente</option>
+            <option value="PAGO">Pago</option>
+            <option value="RECEBIDO">Recebido</option>
+        </select>
+        <button type="submit">Filtrar</button>
+        <a href="/lancamentos">Limpar</a>
+    </form>
+</div>
+
+<div style="margin-bottom: 15px;">
+    <a href="/lancamentos/novo">+ Novo Lançamento</a>
+    <a href="/lancamentos/pdf">Exportar PDF</a>
+    <a href="/logout">Sair</a>
+</div>
+
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Descrição</th>
+            <th>Data</th>
+            <th>Valor</th>
+            <th>Tipo</th>
+            <th>Situação</th>
+            <th>Observação</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr th:each="l : ${lista}">
+            <td th:text="${l.id}"></td>
+            <td th:text="${l.descricao}"></td>
+            <td th:text="${#temporals.format(l.dataLancamento, 'dd/MM/yyyy')}"></td>
+            <td th:text="'R$ ' + ${l.valor}"></td>
+            <td th:text="${l.tipoLancamento}"></td>
+            <td th:text="${l.situacao}"></td>
+            <td th:text="${l.observacao}"></td>
+            <td>
+                <a th:href="@{/lancamentos/editar/{id}(id=${l.id})}">Editar</a>
+                <a th:href="@{/lancamentos/excluir/{id}(id=${l.id})}"
+                    onclick="return confirm('Deseja excluir?')">Excluir</a>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+</body>
+
+</html>

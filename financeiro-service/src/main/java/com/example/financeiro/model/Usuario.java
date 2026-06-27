@@ -1,0 +1,35 @@
+package com.example.financeiro.model;
+
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "usuario")
+public class Usuario implements java.io.Serializable {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
+    @Column(name = "nome")
+    private String nome;
+
+    @Column(name = "login")
+    private String login;
+
+    @Column(name = "senha")
+    private String senha;
+
+    @Column(name = "email")
+    private String email;
+
+    public Integer getId() { return id; }
+    public void setId(Integer id) { this.id = id; }
+    public String getNome() { return nome; }
+    public void setNome(String nome) { this.nome = nome; }
+    public String getLogin() { return login; }
+    public void setLogin(String login) { this.login = login; }
+    public String getSenha() { return senha; }
+    public void setSenha(String senha) { this.senha = senha; }
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
+}
