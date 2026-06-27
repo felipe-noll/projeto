@@ -26,9 +26,9 @@ public class AuthController {
 
     @PostMapping("/login")
     public String login(@RequestParam String login,
-                        @RequestParam String senha,
-                        HttpSession session,
-                        Model model) {
+            @RequestParam String senha,
+            HttpSession session,
+            Model model) {
         Optional<Usuario> user = usuarioRepo.findByLogin(login);
         if (user.isPresent() && user.get().getSenha().equals(senha)) {
             session.setAttribute("usuarioLogado", user.get());
@@ -52,17 +52,22 @@ public class AuthController {
     @PostMapping("/registrar")
     public String registrarUsuario(Usuario usuario) {
         usuarioRepo.save(usuario);
-        emailService.enviarEmailSimples(
-                usuario.getEmail(),
-                "Bem-vindo!",
-                "Olá " + usuario.getNome() + ", sua conta foi criada com sucesso!");
+        try {
+            emailService.enviarEmailSimples(
+                    usuario.getEmail(),
+                    "Bem-vindo!",
+                    "Olá " + usuario.getNome() + ", sua conta foi criada com sucesso!");
+        } catch (Exception e) {
+            // Falha no envio de e-mail não impede o registro
+        }
         return "redirect:/";
     }
 
     @GetMapping("/perfil/editar")
     public String editarPerfil(HttpSession session, Model model) {
         Usuario usuarioLogado = (Usuario) session.getAttribute("usuarioLogado");
-        if (usuarioLogado == null) return "redirect:/";
+        if (usuarioLogado == null)
+            return "redirect:/";
         model.addAttribute("usuario", usuarioLogado);
         return "editar-perfil";
     }
@@ -70,14 +75,19 @@ public class AuthController {
     @PostMapping("/perfil/salvar")
     public String salvarPerfil(Usuario usuarioAtualizado, HttpSession session) {
         Usuario usuarioLogado = (Usuario) session.getAttribute("usuarioLogado");
-        if (usuarioLogado == null) return "redirect:/";
+        if (usuarioLogado == null)
+            return "redirect:/";
         usuarioAtualizado.setId(usuarioLogado.getId());
         usuarioRepo.save(usuarioAtualizado);
         session.setAttribute("usuarioLogado", usuarioAtualizado);
-        emailService.enviarEmailSimples(
-                usuarioAtualizado.getEmail(),
-                "Perfil Atualizado",
-                "Olá " + usuarioAtualizado.getNome() + ", suas informações foram alteradas.");
+        try {
+            emailService.enviarEmailSimples(
+                    usuarioAtualizado.getEmail(),
+                    "Perfil Atualizado",
+                    "Olá " + usuarioAtualizado.getNome() + ", suas informações foram alteradas.");
+        } catch (Exception e) {
+            // Falha no envio de e-mail não impede a atualização do perfil
+        }
         return "redirect:/lancamentos";
     }
 }
