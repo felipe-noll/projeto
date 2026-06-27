@@ -51,14 +51,14 @@ jobs:
         if: always()
         uses: jwgmeligmeyling/pmd-github-action@v1.2
         with:
-          path: 'app/target/pmd-reports/pmd.xml'
+          path: 'app/target/pmd.xml'
 
       - name: Publicar relatório PMD
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: pmd-report
-          path: app/target/pmd-reports/
+          path: app/target/pmd.xml
 
 
       - name: Package
@@ -119,4 +119,4 @@ jobs:
               -o StrictHostKeyChecking=no \
               -o ServerAliveInterval=60 \
               ${{ secrets.PROD_USER }}@${{ secrets.PROD_HOST }} \
-              "cd ~/projeto && git fetch origin && git reset --hard origin/main && sudo docker compose -f docker-compose.prod.yml up -d --build"giut 
+              "cd ~/projeto && git fetch origin && git reset --hard origin/main && sudo docker compose -f docker-compose.prod.yml up -d --build"
