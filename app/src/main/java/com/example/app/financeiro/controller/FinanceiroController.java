@@ -34,13 +34,18 @@ public class FinanceiroController {
             @RequestParam(required = false) String situacao,
             HttpSession session,
             Model model) {
+        String string;
 
         Usuario usuarioLogado = (Usuario) session.getAttribute("usuarioLogado");
-        if (usuarioLogado == null) return "redirect:/";
+        if (usuarioLogado == null)
+            return "redirect:/";
 
-        if (descricao != null && descricao.trim().isEmpty()) descricao = null;
-        if (tipoLancamento != null && tipoLancamento.trim().isEmpty()) tipoLancamento = null;
-        if (situacao != null && situacao.trim().isEmpty()) situacao = null;
+        if (descricao != null && descricao.trim().isEmpty())
+            descricao = null;
+        if (tipoLancamento != null && tipoLancamento.trim().isEmpty())
+            tipoLancamento = null;
+        if (situacao != null && situacao.trim().isEmpty())
+            situacao = null;
 
         if (descricao != null || dataInicio != null || dataFim != null || tipoLancamento != null || situacao != null) {
             model.addAttribute("lista", lancamentoRepo.findComFiltros(
@@ -53,7 +58,8 @@ public class FinanceiroController {
 
     @GetMapping("/lancamentos/novo")
     public String novoLancamento(HttpSession session, Model model) {
-        if (session.getAttribute("usuarioLogado") == null) return "redirect:/";
+        if (session.getAttribute("usuarioLogado") == null)
+            return "redirect:/";
         model.addAttribute("lancamento", new Lancamento());
         return "form-lancamento";
     }
@@ -61,7 +67,8 @@ public class FinanceiroController {
     @PostMapping("/lancamentos/salvar")
     public String salvarLancamento(Lancamento lancamento, HttpSession session) {
         Usuario usuarioLogado = (Usuario) session.getAttribute("usuarioLogado");
-        if (usuarioLogado == null) return "redirect:/";
+        if (usuarioLogado == null)
+            return "redirect:/";
         lancamento.setUsuario(usuarioLogado);
         lancamentoRepo.save(lancamento);
         return "redirect:/lancamentos";
@@ -69,7 +76,8 @@ public class FinanceiroController {
 
     @GetMapping("/lancamentos/editar/{id}")
     public String editarLancamento(@PathVariable Long id, HttpSession session, Model model) {
-        if (session.getAttribute("usuarioLogado") == null) return "redirect:/";
+        if (session.getAttribute("usuarioLogado") == null)
+            return "redirect:/";
         Optional<Lancamento> lancamento = lancamentoRepo.findById(id);
         if (lancamento.isPresent()) {
             model.addAttribute("lancamento", lancamento.get());
@@ -102,7 +110,7 @@ public class FinanceiroController {
         for (Lancamento l : lancamentos) {
             document.add(new Paragraph(
                     l.getDescricao() + " | R$ " + l.getValor() + " | " +
-                    l.getDataLancamento() + " | " + l.getTipoLancamento() + " | " + l.getSituacao()));
+                            l.getDataLancamento() + " | " + l.getTipoLancamento() + " | " + l.getSituacao()));
         }
         document.close();
     }

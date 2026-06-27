@@ -40,14 +40,14 @@ jobs:
           path: '**/target/surefire-reports/'
 
       - name: PMD - Mess Detector
-        run: |
-          mvn pmd:pmd -pl app
-          echo "=== Relatório PMD ==="
-          if [ -f app/target/pmd-reports/pmd.xml ]; then
-            VIOLATIONS=$(grep -c '<violation' app/target/pmd-reports/pmd.xml 2>/dev/null || echo 0)
-            echo "Total de violações: $VIOLATIONS"
-            grep -o 'rule="[^"]*"' app/target/pmd-reports/pmd.xml | sort | uniq -c | sort -rn || true
-          fi
+        run: mvn pmd:pmd -pl app
+        continue-on-error: true
+
+      - name: Publicar anotações PMD
+        if: always()
+        uses: jwgmeligmeyling/pmd-github-action@v1.2
+        with:
+          path: 'app/target/pmd-reports/pmd.xml'
 
       - name: Publicar relatório PMD
         if: always()
@@ -57,14 +57,14 @@ jobs:
           path: app/target/pmd-reports/
 
       - name: Checkstyle
-        run: |
-          mvn checkstyle:checkstyle -pl app
-          echo "=== Relatório Checkstyle ==="
-          if [ -f app/target/checkstyle-reports/checkstyle-result.xml ]; then
-            ERRORS=$(grep -c '<error ' app/target/checkstyle-reports/checkstyle-result.xml 2>/dev/null || echo 0)
-            echo "Total de violações: $ERRORS"
-            grep '<error ' app/target/checkstyle-reports/checkstyle-result.xml | head -20 || true
-          fi
+        run: mvn checkstyle:checkstyle -pl app
+        continue-on-error: true
+
+      - name: Publicar anotações Checkstyle
+        if: always()
+        uses: jwgmeligmeyling/checkstyle-github-action@v1.2
+        with:
+          path: 'app/target/checkstyle-reports/checkstyle-result.xml'
 
       - name: Publicar relatório Checkstyle
         if: always()
@@ -97,7 +97,7 @@ jobs:
           mkdir -p ~/.ssh
           echo "${{ secrets.HOMOLOG_SSH_KEY }}" > ~/.ssh/deploy_key
           chmod 600 ~/.ssh/deploy_key
-          ssh-keyscan -p ${{ secrets.SSH_PORT }} -H ${{ secrets.HOMOLOG_HOST }} >> ~/.ssh/known_hosts
+          ssh-keyscan -p ${{ secrets.SSH_PORT }} -H ${{ secrets.HOMOLOG_HOST }} >> ~/.ssh/known_hosts || true
 
       - name: Deploy em Homolog via SSH
         run: |
@@ -106,7 +106,7 @@ jobs:
               -o StrictHostKeyChecking=no \
               -o ServerAliveInterval=60 \
               ${{ secrets.HOMOLOG_USER }}@${{ secrets.HOMOLOG_HOST }} \
-              "cd ~/projeto && git pull origin main && sudo docker compose -f docker-compose.homolog.yml up -d --build"
+              "cd ~/projeto && git fetch origin && git reset --hard origin/main && sudo docker compose -f docker-compose.homolog.yml up -d --build"
 
   # ============================================================
   # G) ATUALIZAÇÃO DO AMBIENTE DE PRODUÇÃO
@@ -122,7 +122,7 @@ jobs:
           mkdir -p ~/.ssh
           echo "${{ secrets.PROD_SSH_KEY }}" > ~/.ssh/deploy_key
           chmod 600 ~/.ssh/deploy_key
-          ssh-keyscan -p ${{ secrets.SSH_PORT }} -H ${{ secrets.PROD_HOST }} >> ~/.ssh/known_hosts
+          ssh-keyscan -p ${{ secrets.SSH_PORT }} -H ${{ secrets.PROD_HOST }} >> ~/.ssh/known_hosts || true
 
       - name: Deploy em Prod via SSH
         run: |
@@ -131,4 +131,4 @@ jobs:
               -o StrictHostKeyChecking=no \
               -o ServerAliveInterval=60 \
               ${{ secrets.PROD_USER }}@${{ secrets.PROD_HOST }} \
-              "cd ~/projeto && git pull origin main && sudo docker compose -f docker-compose.prod.yml up -d --build"
+              "cd ~/projeto && git fetch origin && git reset --hard origin/main && sudo docker compose -f docker-compose.prod.yml up -d --build"
