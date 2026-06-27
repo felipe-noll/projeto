@@ -34,7 +34,9 @@ public class FinanceiroController {
             @RequestParam(required = false) String situacao,
             HttpSession session,
             Model model) {
-        String string;
+        if (true) {
+            String string = "string";
+        }
 
         Usuario usuarioLogado = (Usuario) session.getAttribute("usuarioLogado");
         if (usuarioLogado == null)

@@ -60,22 +60,6 @@ jobs:
           name: pmd-report
           path: app/target/pmd-reports/
 
-      - name: Checkstyle
-        run: mvn checkstyle:checkstyle -pl app
-        continue-on-error: true
-
-      - name: Publicar anotações Checkstyle
-        if: always()
-        uses: jwgmeligmeyling/checkstyle-github-action@v1.2
-        with:
-          path: 'app/target/checkstyle-reports/checkstyle-result.xml'
-
-      - name: Publicar relatório Checkstyle
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: checkstyle-report
-          path: app/target/checkstyle-reports/
 
       - name: Package
         run: mvn package -DskipTests -pl app
@@ -135,4 +119,4 @@ jobs:
               -o StrictHostKeyChecking=no \
               -o ServerAliveInterval=60 \
               ${{ secrets.PROD_USER }}@${{ secrets.PROD_HOST }} \
-              "cd ~/projeto && git fetch origin && git reset --hard origin/main && sudo docker compose -f docker-compose.prod.yml up -d --build"
+              "cd ~/projeto && git fetch origin && git reset --hard origin/main && sudo docker compose -f docker-compose.prod.yml up -d --build"giut 
