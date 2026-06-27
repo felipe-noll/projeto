@@ -8,9 +8,6 @@ on:
 
 jobs:
 
-  # ============================================================
-  # B) IMPLEMENTAÇÃO + D) TESTES + E) QUALIDADE DE CÓDIGO
-  # ============================================================
   build-and-quality:
     name: Build, Test & Quality
     runs-on: ubuntu-latest
@@ -51,15 +48,14 @@ jobs:
         if: always()
         uses: jwgmeligmeyling/pmd-github-action@v1.2
         with:
-          path: 'app/target/pmd.xml'
+          path: '**/pmd.xml'
 
       - name: Publicar relatório PMD
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: pmd-report
-          path: app/target/pmd.xml
-
+          path: '**/pmd.xml'
 
       - name: Package
         run: mvn package -DskipTests -pl app
@@ -70,11 +66,8 @@ jobs:
           name: app-jar
           path: app/target/*.jar
 
-  # ============================================================
-  # F) ATUALIZAÇÃO DO AMBIENTE DE HOMOLOGAÇÃO
-  # ============================================================
   deploy-homolog:
-    name: Deploy Homologação
+    name: Deploy Homologacao
     runs-on: ubuntu-latest
     needs: build-and-quality
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
@@ -96,11 +89,8 @@ jobs:
               ${{ secrets.HOMOLOG_USER }}@${{ secrets.HOMOLOG_HOST }} \
               "cd ~/projeto && git fetch origin && git reset --hard origin/main && sudo docker compose -f docker-compose.homolog.yml up -d --build"
 
-  # ============================================================
-  # G) ATUALIZAÇÃO DO AMBIENTE DE PRODUÇÃO
-  # ============================================================
   deploy-prod:
-    name: Deploy Produção
+    name: Deploy Producao
     runs-on: ubuntu-latest
     needs: deploy-homolog
 
