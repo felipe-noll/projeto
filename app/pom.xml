@@ -96,7 +96,7 @@
                 <artifactId>maven-checkstyle-plugin</artifactId>
                 <version>3.3.1</version>
                 <configuration>
-                    <configLocation>google_checks.xml</configLocation>
+                    <configLocation>sun_checks.xml</configLocation>
                     <sourceEncoding>UTF-8</sourceEncoding>
                     <consoleOutput>true</consoleOutput>
                     <failsOnError>false</failsOnError>
